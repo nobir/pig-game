@@ -25,23 +25,9 @@ GAME RULES:
 
 document.addEventListener( "DOMContentLoaded", function(){
 
-    var scores, scoreRound, activePlayer, selectDiv, diceDOM;
+    var scores, scoreRound, activePlayer, selectDiv, diceDOM, isPlayOn;
 
-    scores = [0, 0];
-    scoreRound = 0;
-    activePlayer = 0;
-    selectDiv = [ "#score-0", "#score-1", "#current-0", "#current-1" ];
-    diceDOM = querySelect( ".dice" );
-    
-    
-    diceDOM.style.display = "none";
-    
-    for( var i = 0; i < selectDiv.length; i++ ){
-
-        querySelect( selectDiv[i] ).textContent = "0";
-        //console.log( selectDiv[i] );
-
-    }
+    initGame();
     
 
     /**
@@ -52,9 +38,7 @@ document.addEventListener( "DOMContentLoaded", function(){
 
     querySelect( ".btn-roll" ).addEventListener( "click", rollDice );
     querySelect( ".btn-hold" ).addEventListener( "click", holdScore );
-    querySelect( ".btn-new" ).addEventListener( "click", newGame );
-    
-    
+    querySelect( ".btn-new" ).addEventListener( "click", initGame );
     
     
 
@@ -71,48 +55,81 @@ document.addEventListener( "DOMContentLoaded", function(){
     }
 
     function rollDice(){
-        // Generate Ramdom Number for roll the dice
-        var dice = (Math.floor( Math.random() * 6 ) + 1 );
-        // console.log( dice );
+
+        if( isPlayOn ){
+            // Generate Ramdom Number for roll the dice
+            var dice = (Math.floor( Math.random() * 6 ) + 1 );
+            // console.log( dice );
 
 
-        // Display the dice using ramdom number
-        diceDOM.src = "img/dice-" + dice + ".png";
-        diceDOM.style.display = "block";
+            // Display the dice using ramdom number
+            diceDOM.src = "img/dice-" + dice + ".png";
+            diceDOM.style.display = "block";
 
 
-        // Update the round score if the roll dice shows 1
-        if( dice !== 1 ){
+            // Update the round score if the roll dice shows 1
+            if( dice !== 1 ){
 
-            scoreRound += dice;
-            querySelect( "#current-" + activePlayer ).textContent = scoreRound;
+                scoreRound += dice;
+                querySelect( "#current-" + activePlayer ).textContent = scoreRound;
 
-        }else{
+            }else{
 
-            nextPlayer();
+                nextPlayer();
 
+            }
         }
+
     }
 
     function holdScore(){
 
-        // Add the scores in score var
-        scores[activePlayer] += scoreRound;
+        if( isPlayOn ){
+            // Add the scores in score var
+            scores[activePlayer] += scoreRound;
 
-        // Update the UI
-        querySelect( "#score-" + activePlayer ).textContent = scores[activePlayer];
+            // Update the UI
+            querySelect( "#score-" + activePlayer ).textContent = scores[activePlayer];
 
-        // Check IF player won
-        if( scores[activePlayer] >= 100 ){
-            querySelect( "#name-" + activePlayer ).textContent = "Winner !";
+            // Check IF player won
+            if( scores[activePlayer] >= 100 ){
+                querySelect( "#name-" + activePlayer ).textContent = "Winner !";
+
+                querySelect( ".player-0-panel" ).classList.toggle( "active" );
+                querySelect( ".player-1-panel" ).classList.toggle( "active" );
+
+                isPlayOn = false;
+            }
+
+            nextPlayer();
         }
 
-        nextPlayer();
     }
 
-    function newGame(){
+    function initGame(){
 
-        window.location.reload();
+        scores = [0, 0];
+        scoreRound = 0;
+        activePlayer = 0;
+        isPlayOn = true;
+        selectDiv = [ "#score-0", "#score-1", "#current-0", "#current-1" ];
+        diceDOM = querySelect( ".dice" );
+        
+        
+        diceDOM.style.display = "none";
+        
+        for( var i = 0; i < selectDiv.length; i++ ){
+    
+            querySelect( selectDiv[i] ).textContent = "0";
+            //console.log( selectDiv[i] );
+    
+        }
+
+        querySelect( "#name-0" ).textContent = "Player 1";
+        querySelect( "#name-1" ).textContent = "Player 2";
+        querySelect( ".player-0-panel" ).classList.remove( "active" );
+        querySelect( ".player-1-panel" ).classList.remove( "active" );
+        querySelect( ".player-0-panel" ).classList.add( "active" );
 
     }
 
