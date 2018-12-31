@@ -103,7 +103,7 @@ document.addEventListener( "DOMContentLoaded", function(){
         querySelect( "#score-" + activePlayer ).textContent = scores[activePlayer];
 
         // Check IF player won
-        if( scores[activePlayer] >= 10 ){
+        if( scores[activePlayer] >= 100 ){
             querySelect( "#name-" + activePlayer ).textContent = "Winner !";
         }
 
