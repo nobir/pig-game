@@ -25,7 +25,7 @@ GAME RULES:
 
 document.addEventListener( "DOMContentLoaded", function(){
 
-    var scores, scoreRound, activePlayer, selectDiv, diceDOM, isPlayOn;
+    var scores, scoreRound, activePlayer, selectDiv, diceDOM, isPlayOn, winScore;
 
     initGame();
     
@@ -68,7 +68,16 @@ document.addEventListener( "DOMContentLoaded", function(){
 
 
             // Update the round score if the roll dice shows 1
-            if( dice !== 1 ){
+            if( dice == 6 ){
+
+                scores[activePlayer] = 0;
+
+                querySelect( "#score-" + activePlayer ).textContent = "0";
+                querySelect( "#current-" + activePlayer ).textContent = "0";
+
+                nextPlayer();
+
+            }else if( dice !== 1 ){
 
                 scoreRound += dice;
                 querySelect( "#current-" + activePlayer ).textContent = scoreRound;
@@ -92,16 +101,19 @@ document.addEventListener( "DOMContentLoaded", function(){
             querySelect( "#score-" + activePlayer ).textContent = scores[activePlayer];
 
             // Check IF player won
-            if( scores[activePlayer] >= 100 ){
+            if( scores[activePlayer] >= winScore.value ){
                 querySelect( "#name-" + activePlayer ).textContent = "Winner !";
 
-                querySelect( ".player-0-panel" ).classList.toggle( "active" );
-                querySelect( ".player-1-panel" ).classList.toggle( "active" );
-
                 isPlayOn = false;
+
+                winScore.removeAttribute( "disabled" );
+                winScore.style.cursor = "auto";
+                
+                // console.log( winScore );
+            }else{
+                nextPlayer();
             }
 
-            nextPlayer();
         }
 
     }
@@ -111,11 +123,12 @@ document.addEventListener( "DOMContentLoaded", function(){
         scores = [0, 0];
         scoreRound = 0;
         activePlayer = 0;
+        winScore = querySelect( "#winning-score" );
         isPlayOn = true;
         selectDiv = [ "#score-0", "#score-1", "#current-0", "#current-1" ];
         diceDOM = querySelect( ".dice" );
         
-        
+        //console.log( winScore );
         diceDOM.style.display = "none";
         
         for( var i = 0; i < selectDiv.length; i++ ){
@@ -130,6 +143,9 @@ document.addEventListener( "DOMContentLoaded", function(){
         querySelect( ".player-0-panel" ).classList.remove( "active" );
         querySelect( ".player-1-panel" ).classList.remove( "active" );
         querySelect( ".player-0-panel" ).classList.add( "active" );
+
+        winScore.removeAttribute( "disabled" );
+        winScore.style.cursor = "auto";
 
     }
 
@@ -146,6 +162,9 @@ document.addEventListener( "DOMContentLoaded", function(){
         setTimeout(() => {
             diceDOM.style.display = "none";
         }, 200);
+
+        winScore.disabled = true;
+        winScore.style.cursor = "not-allowed";
     }
 
 });
